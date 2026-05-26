@@ -1,222 +1,931 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Ali Express · Products</title>
+    <title>Ali Express - Product Management</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{
-            font-family:system-ui,
-            'Segoe UI',sans-serif;
-            background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px;}
 
-        .header{background:#fff;border-radius:24px;padding:20px;margin-bottom:25px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.15);}
-        h1{color:#e67e22;font-size:38px;}
-        .nav-links{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:12px;}
-        .nav-links a{text-decoration:none;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:8px 28px;border-radius:40px;font-weight:600;transition:.2s;}
-        .nav-links a:hover{transform:translateY(-2px);}
-        .add-btn{display:block;margin:0 auto 25px;padding:10px 28px;background:#2196F3;color:#fff;border:none;border-radius:40px;font-size:16px;font-weight:700;cursor:pointer;transition:.2s;}
-        .add-btn:hover{transform:scale(1.02);}
-        #productsListDiv{display:flex;flex-wrap:wrap;justify-content:center;gap:24px;}
-        .card{background:#fff;border-radius:20px;width:280px;padding:18px;transition:.2s;box-shadow:0 8px 20px rgba(0,0,0,0.1);}
-        .card:hover{transform:translateY(-5px);}
-        .card img{width:100%;height:160px;object-fit:cover;border-radius:14px;margin-bottom:12px;background:#f0f0f0;}
-        .card h3{font-size:18px;text-align:center;margin:8px 0;}
-        .price{text-align:center;background:#fef5e8;padding:6px;border-radius:30px;margin:10px 0;}
-        .price span:first-child{font-size:18px;}
-        .price span:last-child{font-size:28px;font-weight:700;color:#e67e22;}
-        .sold,.shop{font-size:13px;margin:6px 0;color:#555;}
-        .free{color:#2ecc71;font-weight:600;}
-        .nofree{color:#e74c3c;font-weight:600;}
-        .actions{display:flex;gap:8px;margin-top:12px;}
-        .delete,.edit{flex:1;border:none;padding:8px;border-radius:30px;font-weight:600;color:#fff;cursor:pointer;}
-        .delete{background:#e74c3c;}
-        .edit{background:#27ae60;}
-        .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:1000;padding:15px;}
-        .modal-content{background:#fff;padding:24px;border-radius:24px;width:450px;max-width:100%;max-height:85vh;overflow:auto;}
-        .modal-content h2{color:#e67e22;margin-bottom:16px;text-align:center;}
-        .modal-content label{display:block;font-weight:600;margin:10px 0 4px;font-size:13px;}
-        .modal-content input,.modal-content select{width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:14px;margin-bottom:6px;}
-        .modal-content button{width:100%;padding:12px;background:#e67e22;border:none;border-radius:40px;color:#fff;font-weight:700;margin-top:16px;cursor:pointer;}
-        .close-modal{float:right;font-size:26px;cursor:pointer;color:#999;}
-        .loading{text-align:center;color:#fff;font-size:20px;padding:40px;}
-        .toast{position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:50px;color:#fff;z-index:1100;animation:slideIn .2s;}
-        .toast.success{background:#2ecc71;}
-        .toast.error{background:#e74c3c;}
-        @keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
-        @media (max-width:480px){
-            .nav-links{flex-direction:column;align-items:center;}
-            .nav-links a{width:100%;max-width:200px;text-align:center;}
-            h1{font-size:28px;}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        @media (max-width:244px){
-            body{padding:8px;}
-            .header{padding:10px;border-radius:16px;}
-            h1{font-size:18px !important;}
-            .nav-links{flex-direction:column;gap:6px;}
-            .nav-links a{width:100%;padding:6px;font-size:11px;}
-            .add-btn{font-size:11px;padding:6px 12px;}
-            .card{width:100%;padding:10px;}
-            .card img{height:110px;}
-            .price span:last-child{font-size:18px;}
-            .delete,.edit{font-size:10px;padding:5px;}
-            .modal-content{padding:12px;}
-            .toast{top:10px;right:10px;left:10px;text-align:center;font-size:12px;}
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            color: #e67e22;
+            font-size: 42px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            transition: font-size 0.2s ease;
+        }
+
+        .nav-links {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px 30px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Add Button */
+        .add-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #2196F3, #0b7dda);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(33,150,243,0.4);
+        }
+
+        /* Products Grid */
+        #productsListDiv {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        #productsListDiv>div {
+            background: white;
+            border-radius: 15px;
+            width: 280px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #productsListDiv>div::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #e67e22, #f39c12, #e67e22);
+            transition: left 0.4s ease;
+        }
+
+        #productsListDiv>div:hover::before {
+            left: 0;
+        }
+
+        #productsListDiv>div:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .price {
+            text-align: center;
+            margin: 10px 0;
+            padding: 5px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .price span:first-child {
+            font-size: 20px;
+            color: #666;
+        }
+
+        .price span:last-child {
+            font-size: 32px;
+            font-weight: bold;
+            color: #e67e22;
+        }
+
+        .sold {
+            color: #666;
+            font-size: 14px;
+            margin: 8px 0;
+        }
+
+        .free-shipping {
+            color: #27ae60;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+
+        .no-free-shipping {
+            color: #e74c3c;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+
+        .shop-name {
+            color: #3498db;
+            font-size: 14px;
+            margin: 8px 0;
+        }
+
+        .delete {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .edit {
+            background: linear-gradient(135deg, #27ae60, #219a52);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .delete:hover, .edit:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modal Form */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 15px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 450px;
+            max-width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content h2 {
+            text-align: center;
+            color: #e67e22;
+            margin-bottom: 20px;
+        }
+
+        .modal-content label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+        }
+
+        .modal-content input:focus, .modal-content select:focus {
+            outline: none;
+            border-color: #e67e22;
+        }
+
+        .modal-content button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #e74c3c;
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 24px;
+            color: white;
+            padding: 50px;
+        }
+
+        .error-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            z-index: 1001;
+            animation: slideIn 0.3s ease;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .success-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            z-index: 1001;
+            animation: slideIn 0.3s ease;
+            background: linear-gradient(135deg, #27ae60, #219a52);
+        }
+
+        /* ========== RESPONSIVE BREAKPOINTS ========== */
+
+        /* Tablet (768px and below) */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 34px;
+            }
+            
+            .nav-links a {
+                padding: 8px 22px;
+                font-size: 14px;
+            }
+            
+            .add-btn {
+                font-size: 16px;
+                padding: 10px 25px;
+            }
+        }
+
+        /* Mobile (600px and below) */
+        @media (max-width: 600px) {
+            .header {
+                padding: 20px 15px;
+                border-radius: 18px;
+            }
+            
+            h1 {
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+            
+            .nav-links {
+                gap: 10px;
+            }
+            
+            .nav-links a {
+                padding: 8px 18px;
+                font-size: 13px;
+            }
+            
+            .add-btn {
+                font-size: 15px;
+                padding: 10px 22px;
+            }
+            
+            #productsListDiv {
+                gap: 20px;
+            }
+            
+            #productsListDiv>div {
+                width: 260px;
+                padding: 16px;
+            }
+            
+            .product-img {
+                height: 160px;
+            }
+            
+            .price span:last-child {
+                font-size: 28px;
+            }
+        }
+
+        /* Mobile Portrait (480px and below) */
+        @media (max-width: 480px) {
+            .header {
+                padding: 16px 12px;
+                margin-bottom: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .nav-links a {
+                width: 100%;
+                max-width: 200px;
+                text-align: center;
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
+            .add-btn {
+                font-size: 14px;
+                padding: 10px 20px;
+                margin: 15px auto;
+            }
+            
+            #productsListDiv>div {
+                width: 100%;
+                max-width: 320px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+                width: 95%;
+            }
+            
+            .modal-content h2 {
+                font-size: 1.4rem;
+            }
+            
+            .error-message, .success-message {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                text-align: center;
+                font-size: 14px;
+                padding: 12px 16px;
+            }
+        }
+
+        /* Small phones (380px and below) */
+        @media (max-width: 380px) {
+            body {
+                padding: 12px;
+            }
+            
+            h1 {
+                font-size: 22px;
+            }
+            
+            .nav-links a {
+                padding: 7px 14px;
+                font-size: 12px;
+            }
+            
+            .add-btn {
+                font-size: 13px;
+                padding: 8px 18px;
+            }
+            
+            #productsListDiv>div {
+                padding: 14px;
+            }
+            
+            .product-img {
+                height: 140px;
+            }
+            
+            h3 {
+                font-size: 16px;
+            }
+            
+            .price span:last-child {
+                font-size: 24px;
+            }
+            
+            .sold, .shop-name {
+                font-size: 12px;
+            }
+            
+            .delete, .edit {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+
+        /* EXTRA SMALL - 244px SPECIFIC BREAKPOINT */
+        @media (max-width: 244px) {
+            body {
+                padding: 8px;
+            }
+            
+            .header {
+                padding: 10px 8px;
+                border-radius: 14px;
+                margin-bottom: 15px;
+            }
+            
+            h1 {
+                font-size: 18px !important;
+                margin-bottom: 8px;
+            }
+            
+            .nav-links {
+                margin-top: 8px;
+                gap: 6px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .nav-links a {
+                width: 100%;
+                max-width: none;
+                padding: 6px 10px;
+                font-size: 11px;
+                border-radius: 25px;
+            }
+            
+            .add-btn {
+                font-size: 11px;
+                padding: 6px 14px;
+                margin: 10px auto;
+            }
+            
+            #productsListDiv {
+                gap: 12px;
+            }
+            
+            #productsListDiv>div {
+                width: 100%;
+                padding: 10px;
+                border-radius: 12px;
+            }
+            
+            .product-img {
+                height: 110px;
+                border-radius: 8px;
+                margin-bottom: 8px;
+            }
+            
+            h3 {
+                font-size: 13px;
+                margin: 5px 0;
+            }
+            
+            .price {
+                margin: 6px 0;
+                padding: 3px;
+            }
+            
+            .price span:first-child {
+                font-size: 14px;
+            }
+            
+            .price span:last-child {
+                font-size: 18px;
+            }
+            
+            .sold, .shop-name {
+                font-size: 10px;
+                margin: 4px 0;
+            }
+            
+            .free-shipping, .no-free-shipping {
+                font-size: 10px;
+                margin: 4px 0;
+            }
+            
+            .delete, .edit {
+                padding: 4px 8px;
+                font-size: 10px;
+                margin: 3px;
+            }
+            
+            .modal-content {
+                padding: 12px;
+                border-radius: 14px;
+            }
+            
+            .modal-content h2 {
+                font-size: 1.1rem;
+                margin-bottom: 12px;
+            }
+            
+            .modal-content label {
+                font-size: 11px;
+                margin: 6px 0 3px;
+            }
+            
+            .modal-content input, .modal-content select {
+                padding: 6px;
+                font-size: 11px;
+                margin: 3px 0;
+            }
+            
+            .modal-content button {
+                padding: 8px;
+                font-size: 12px;
+                margin-top: 12px;
+            }
+            
+            .close-modal {
+                top: 8px;
+                right: 12px;
+                font-size: 22px;
+            }
+            
+            .loading {
+                font-size: 14px;
+                padding: 20px;
+            }
+            
+            .error-message, .success-message {
+                padding: 8px 12px;
+                font-size: 11px;
+            }
+        }
+
+        /* Ultra narrow (below 200px) */
+        @media (max-width: 200px) {
+            h1 {
+                font-size: 15px !important;
+            }
+            
+            .nav-links a {
+                font-size: 9px;
+                padding: 5px 8px;
+            }
+            
+            h3 {
+                font-size: 11px;
+            }
+            
+            .price span:last-child {
+                font-size: 15px;
+            }
         }
     </style>
 </head>
+
 <body>
-<div class="header">
-    <h1>🛍️ Ali Express</h1>
-    <div class="nav-links">
-        <a href="./index.html">🏠 Home</a>
-        <a href="./product.html">📦 All Products</a>
+    <div class="header">
+        <h1>🛍️ Ali Express</h1>
+        <div class="nav-links">
+            <a href="./index.html">🏠 Home</a>
+            <a href="./product.html">📦 All Products</a>
+        </div>
     </div>
-</div>
-<button class="add-btn" onclick="showAddModal()">➕ Add New Product</button>
-<div id="productsListDiv"><div class="loading">⏳ Loading...</div></div>
-<div id="modalRoot"></div>
 
-<script>
-const API = "http://localhost:7979/api";
-let products = [];
+    <button class="add-btn" onclick="showAddForm()">➕ Add New Product</button>
 
-function toast(msg, type){
-    const t = document.createElement('div');
-    t.className = `toast ${type}`;
-    t.innerText = msg;
-    document.body.appendChild(t);
-    setTimeout(()=>t.remove(),2500);
-}
+    <div id="productsListDiv">
+        <div class="loading">⏳ Loading products...</div>
+    </div>
+    <div id="modalContainer"></div>
 
-function closeModal(){ document.getElementById("modalRoot").innerHTML = ""; }
+    <script>
+    let baseUrl = "http://localhost:7979/api";
 
-async function fetchProducts(){
-    try{
-        const res = await axios.get(API+"/products");
-        products = res.data;
-        const container = document.getElementById("productsListDiv");
-        if(!products.length){
-            container.innerHTML = `<div class="loading">📭 No products. Click "Add New Product"</div>`;
+    // Show message
+    function showMessage(message, type) {
+        // Remove existing messages
+        const existing = document.querySelectorAll('.error-message, .success-message');
+        existing.forEach(msg => msg.remove());
+        
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `${type}-message`;
+        msgDiv.innerHTML = message;
+        document.body.appendChild(msgDiv);
+        setTimeout(() => {
+            msgDiv.remove();
+        }, 3000);
+    }
+
+    // Close modal
+    function closeModal() {
+        document.querySelector("#modalContainer").innerHTML = "";
+    }
+
+    // Get all products
+    async function getAllProducts() {
+        try {
+            const response = await axios.get(baseUrl + "/products");
+            console.log("Products loaded:", response.data);
+            
+            let productsListDiv = document.querySelector("#productsListDiv");
+            productsListDiv.innerHTML = "";
+            
+            if (response.data.length === 0) {
+                productsListDiv.innerHTML = "<div class='loading'>📭 No products found. Click 'Add New Product' to add!</div>";
+                return;
+            }
+            
+            response.data.forEach(eachProduct => {
+                // Fallback image if ./img/airpod.webp doesn't exist
+                const imgSrc = "./img/airpod.webp";
+                productsListDiv.innerHTML +=
+                `<div>
+                    <img class="product-img" src="${imgSrc}" alt="${eachProduct.productName}" onerror="this.src='https://placehold.co/400x200?text=Product'">
+                    <h3>${escapeHtml(eachProduct.productName || 'N/A')}</h3>
+                    <div class="price">
+                        <span>${escapeHtml(eachProduct.currencyCode || '$')}</span> 
+                        <span>${eachProduct.productPrice || 0}</span> 
+                    </div>
+                    <div class="sold">📦 ${eachProduct.numberOfSale || 0} sold</div>
+                    <div class="${(eachProduct.isFreeShipping) ? 'free-shipping' : 'no-free-shipping'}">
+                        ${(eachProduct.isFreeShipping) ? "✓ Free Shipping" : "✗ No free shipping"}
+                    </div>
+                    <div class="shop-name">🏪 ${escapeHtml(eachProduct.shopName || 'Unknown Shop')}</div>
+                    <div>⭐ ${eachProduct.rating || 0} / 5</div>
+                    <button class="delete" onclick="deleteProduct('${eachProduct._id}')">🗑️ Delete</button>
+                    <button class="edit" onclick="editProduct('${eachProduct._id}')">✏️ Edit</button>
+                </div>`
+            });
+        } catch (error) {
+            console.error("Error loading products:", error);
+            document.querySelector("#productsListDiv").innerHTML = 
+                `<div class="loading">❌ Failed to load products. Make sure server is running at ${baseUrl}</div>`;
+            showMessage("Failed to load products: " + (error.message || "Server error"), "error");
+        }
+    }
+
+    // Delete product
+    async function deleteProduct(id) {
+        if (!confirm("Are you sure you want to delete this product?")) {
             return;
         }
-        container.innerHTML = products.map(p=>`
-            <div class="card">
-                <img src="./img/airpod.webp" onerror="this.src='https://placehold.co/400x200?text=Product'" alt="${escape(p.productName)}">
-                <h3>${escape(p.productName)}</h3>
-                <div class="price"><span>${escape(p.currencyCode||'$')}</span> <span>${p.productPrice||0}</span></div>
-                <div class="sold">📦 ${p.numberOfSale||0} sold</div>
-                <div class="${p.isFreeShipping ? 'free' : 'nofree'}">${p.isFreeShipping ? '✓ Free Shipping' : '✗ No free shipping'}</div>
-                <div class="shop">🏪 ${escape(p.shopName||'Unknown')}</div>
-                <div>⭐ ${p.rating||0} / 5</div>
-                <div class="actions">
-                    <button class="delete" onclick="deleteProduct('${p._id}')">🗑️ Delete</button>
-                    <button class="edit" onclick="editProduct('${p._id}')">✏️ Edit</button>
+        
+        console.log("Deleting product ID: ", id);
+        
+        try {
+            await axios.delete(`${baseUrl}/product/${id}`);
+            showMessage("Product deleted successfully!", "success");
+            getAllProducts();
+        } catch (error) {
+            console.error("Delete error: ", error);
+            showMessage("Failed to delete: " + (error.response?.data?.message || "Network error"), "error");
+        }
+    }
+
+    // ============ ADD PRODUCT FUNCTION ============
+    function showAddForm() {
+        document.querySelector("#modalContainer").innerHTML = `
+            <div class="modal">
+                <div class="modal-content">
+                    <span class="close-modal" onclick="closeModal()">&times;</span>
+                    <h2>➕ Add New Product</h2>
+                    
+                    <label>Product Name *</label>
+                    <input type="text" id="newProductName" placeholder="e.g., iPhone 15" required>
+                    
+                    <label>Product Price *</label>
+                    <input type="number" id="newProductPrice" placeholder="e.g., 999" step="0.01" required>
+                    
+                    <label>Currency Code *</label>
+                    <input type="text" id="newCurrencyCode" placeholder="$ or ₹" maxlength="3" value="$" required>
+                    
+                    <label>Number of Sale</label>
+                    <input type="number" id="newNumberOfSale" placeholder="e.g., 150" value="0">
+                    
+                    <label>Rating (0-5)</label>
+                    <input type="number" step="0.1" min="0" max="5" id="newRating" placeholder="e.g., 4.5" value="0">
+                    
+                    <label>Free Shipping</label>
+                    <select id="newIsFreeShipping">
+                        <option value="true">✅ Yes</option>
+                        <option value="false">❌ No</option>
+                    </select>
+                    
+                    <label>Shop Name *</label>
+                    <input type="text" id="newShopName" placeholder="e.g., Apple Store" required>
+                    
+                    <button onclick="addProduct()">✅ Add Product</button>
                 </div>
             </div>
-        `).join('');
-    }catch(e){
-        document.getElementById("productsListDiv").innerHTML = `<div class="loading">❌ Server error at ${API}</div>`;
-        toast("Failed to load products","error");
-    }
-}
-
-async function deleteProduct(id){
-    if(!confirm("Delete product?")) return;
-    try{
-        await axios.delete(`${API}/product/${id}`);
-        toast("Deleted!","success");
-        fetchProducts();
-    }catch(e){ toast("Delete failed","error"); }
-}
-
-function showAddModal(){
-    document.getElementById("modalRoot").innerHTML = `
-        <div class="modal"><div class="modal-content">
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-            <h2>➕ Add Product</h2>
-            <label>Name *</label><input id="add_name" placeholder="iPhone 15">
-            <label>Price *</label><input id="add_price" type="number" step="0.01" placeholder="999">
-            <label>Currency *</label><input id="add_currency" maxlength="3" value="$">
-            <label>Sales</label><input id="add_sales" type="number" value="0">
-            <label>Rating (0-5)</label><input id="add_rating" type="number" step="0.1" min="0" max="5" value="0">
-            <label>Free Shipping</label>
-            <select id="add_free"><option value="true">✅ Yes</option><option value="false">❌ No</option></select>
-            <label>Shop *</label><input id="add_shop" placeholder="Apple Store">
-            <button onclick="addProduct()">✅ Add Product</button>
-        </div></div>
-    `;
-}
-
-async function addProduct(){
-    const name = document.getElementById("add_name")?.value.trim();
-    const price = document.getElementById("add_price")?.value;
-    const currency = document.getElementById("add_currency")?.value.trim();
-    const sales = document.getElementById("add_sales")?.value;
-    const rating = document.getElementById("add_rating")?.value;
-    const free = document.getElementById("add_free")?.value === "true";
-    const shop = document.getElementById("add_shop")?.value.trim();
-    if(!name || !price || !currency || !shop) return toast("Fill all * fields","error");
-    try{
-        await axios.post(`${API}/product`,{
-            productName:name, productPrice:parseFloat(price), currencyCode:currency,
-            numberOfSale:parseInt(sales)||0, rating:parseFloat(rating)||0, isFreeShipping:free, shopName:shop
-        });
-        toast("Product added!","success");
-        closeModal();
-        fetchProducts();
-    }catch(e){ toast("Add failed","error"); }
-}
-
-async function editProduct(id){
-    try{
-        const res = await axios.get(`${API}/product/${id}`);
-        const p = res.data;
-        document.getElementById("modalRoot").innerHTML = `
-            <div class="modal"><div class="modal-content">
-                <span class="close-modal" onclick="closeModal()">&times;</span>
-                <h2>✏️ Edit Product</h2>
-                <input type="hidden" id="edit_id" value="${p._id}">
-                <label>Name *</label><input id="edit_name" value="${escape(p.productName)}">
-                <label>Price *</label><input id="edit_price" type="number" step="0.01" value="${p.productPrice}">
-                <label>Currency *</label><input id="edit_currency" maxlength="3" value="${escape(p.currencyCode||'$')}">
-                <label>Sales</label><input id="edit_sales" type="number" value="${p.numberOfSale||0}">
-                <label>Rating (0-5)</label><input id="edit_rating" type="number" step="0.1" min="0" max="5" value="${p.rating||0}">
-                <label>Free Shipping</label>
-                <select id="edit_free"><option value="true" ${p.isFreeShipping ? "selected":""}>✅ Yes</option><option value="false" ${!p.isFreeShipping ? "selected":""}>❌ No</option></select>
-                <label>Shop *</label><input id="edit_shop" value="${escape(p.shopName)}">
-                <button onclick="updateProduct()">💾 Update</button>
-            </div></div>
         `;
-    }catch(e){ toast("Cannot load product","error"); }
-}
+    }
 
-async function updateProduct(){
-    const id = document.getElementById("edit_id")?.value;
-    const name = document.getElementById("edit_name")?.value.trim();
-    const price = document.getElementById("edit_price")?.value;
-    const currency = document.getElementById("edit_currency")?.value.trim();
-    const sales = document.getElementById("edit_sales")?.value;
-    const rating = document.getElementById("edit_rating")?.value;
-    const free = document.getElementById("edit_free")?.value === "true";
-    const shop = document.getElementById("edit_shop")?.value.trim();
-    if(!name || !price || !currency || !shop) return toast("Fill all fields","error");
-    try{
-        await axios.put(`${API}/product/${id}`,{
-            productName:name, productPrice:parseFloat(price), currencyCode:currency,
-            numberOfSale:parseInt(sales)||0, rating:parseFloat(rating)||0, isFreeShipping:free, shopName:shop
-        });
-        toast("Updated!","success");
-        closeModal();
-        fetchProducts();
-    }catch(e){ toast("Update failed","error"); }
-}
+    async function addProduct() {
+        let productName = document.querySelector("#newProductName")?.value.trim();
+        let productPrice = document.querySelector("#newProductPrice")?.value;
+        let currencyCode = document.querySelector("#newCurrencyCode")?.value.trim();
+        let numberOfSale = document.querySelector("#newNumberOfSale")?.value;
+        let rating = document.querySelector("#newRating")?.value;
+        let isFreeShipping = document.querySelector("#newIsFreeShipping")?.value === "true";
+        let shopName = document.querySelector("#newShopName")?.value.trim();
+        
+        if (!productName || !productPrice || !currencyCode || !shopName) {
+            showMessage("Please fill all required fields (*)", "error");
+            return;
+        }
+        
+        try {
+            await axios.post(`${baseUrl}/product`, {
+                productName,
+                productPrice: parseFloat(productPrice),
+                currencyCode,
+                numberOfSale: parseInt(numberOfSale) || 0,
+                rating: parseFloat(rating) || 0,
+                isFreeShipping,
+                shopName
+            });
+            showMessage("Product added successfully!", "success");
+            closeModal();
+            getAllProducts();
+        } catch(error) {
+            console.error("Add error:", error);
+            showMessage("Failed to add product: " (error.response?.data?.message || error.message), "error");
+        }
+    }
 
-function escape(str){ if(!str) return ''; return str.replace(/[&<>]/g, function(m){ return m=='&'?'&amp;':m=='<'?'&lt;':'&gt;'; }); }
+    // ============ EDIT PRODUCT FUNCTION ============
+    async function editProduct(id) {
+        console.log("Editing product ID: ", id);
+        
+        try {
+            const response = await axios.get(`${baseUrl}/product/${id}`);
+            let product = response.data;
+            
+            document.querySelector("#modalContainer").innerHTML = `
+                <div class="modal">
+                    <div class="modal-content">
+                        <span class="close-modal" onclick="closeModal()">&times;</span>
+                        <h2>✏️ Edit Product</h2>
+                        
+                        <input type="hidden" id="editProductId" value="${product._id}">
+                        
+                        <label>Product Name *</label>
+                        <input type="text" id="editProductName" value="${escapeHtml(product.productName || '')}" required>
+                        
+                        <label>Product Price *</label>
+                        <input type="number" id="editProductPrice" value="${product.productPrice || 0}" step="0.01" required>
+                        
+                        <label>Currency Code *</label>
+                        <input type="text" id="editCurrencyCode" value="${escapeHtml(product.currencyCode || '$')}" maxlength="3" required>
+                        
+                        <label>Number of Sale</label>
+                        <input type="number" id="editNumberOfSale" value="${product.numberOfSale || 0}">
+                        
+                        <label>Rating (0-5)</label>
+                        <input type="number" step="0.1" min="0" max="5" id="editRating" value="${product.rating || 0}">
+                        
+                        <label>Free Shipping</label>
+                        <select id="editIsFreeShipping">
+                            <option ${product.isFreeShipping === true ? "selected" : ""} value="true">✅ Yes</option>
+                            <option ${product.isFreeShipping === false ? "selected" : ""} value="false">❌ No</option>
+                        </select>
+                        
+                        <label>Shop Name *</label>
+                        <input type="text" id="editShopName" value="${escapeHtml(product.shopName || '')}" required>
+                        
+                        <button onclick="updateProduct()">💾 Update Product</button>
+                    </div>
+                </div>
+            `;
+        } catch (error) {
+            console.error("Error fetching product:", error);
+            showMessage("Failed to load product data for editing", "error");
+        }
+    }
 
-fetchProducts();
-</script>
+    async function updateProduct() {
+        let productId = document.querySelector("#editProductId")?.value;
+        let productName = document.querySelector("#editProductName")?.value.trim();
+        let productPrice = document.querySelector("#editProductPrice")?.value;
+        let currencyCode = document.querySelector("#editCurrencyCode")?.value.trim();
+        let numberOfSale = document.querySelector("#editNumberOfSale")?.value;
+        let rating = document.querySelector("#editRating")?.value;
+        let isFreeShipping = document.querySelector("#editIsFreeShipping")?.value === "true";
+        let shopName = document.querySelector("#editShopName")?.value.trim();
+        
+        if (!productName || !productPrice || !currencyCode || !shopName) {
+            showMessage("Please fill all required fields!", "error");
+            return;
+        }
+        
+        try {
+            await axios.put(`${baseUrl}/product/${productId}`, {
+                productName,
+                productPrice: parseFloat(productPrice),
+                currencyCode,
+                numberOfSale: parseInt(numberOfSale) || 0,
+                rating: parseFloat(rating) || 0,
+                isFreeShipping,
+                shopName
+            });
+            showMessage("Product updated successfully!", "success");
+            closeModal();
+            getAllProducts();
+        } catch(error) {
+            console.error("Update error:", error);
+            showMessage("Update failed: " + (error.response?.data?.message || error.message), "error");
+        }
+    }
+
+    // Helper function to escape HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    // Load products on page load
+    getAllProducts();
+    </script>
 </body>
-</html>
+
+</html> 
